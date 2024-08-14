@@ -104,6 +104,7 @@ import {
 import { RechartsWrapper } from './RechartsWrapper';
 import { getDefaultDomainByAxisType } from '../state/selectors/axisSelectors';
 import { getDomainOfItemsWithSameAxis, parseErrorBarsOfAxis } from '../util/getDomainOfErrorBars';
+import { getBoundingClientRectWithZoom } from 'src/util/CartesianUtils';
 
 export interface MousePointer {
   pageX: number;
@@ -1336,7 +1337,7 @@ export const generateCategoricalChart = ({
       }
 
       const element = this.container;
-      const boundingRect: DOMRect = element.getBoundingClientRect();
+      const boundingRect: DOMRect = getBoundingClientRectWithZoom(element);
       const containerOffset = getOffset(boundingRect);
       const e = {
         chartX: Math.round(event.pageX - containerOffset.left),

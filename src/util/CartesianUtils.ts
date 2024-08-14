@@ -271,3 +271,32 @@ export const getAngledRectangleWidth = ({ width, height }: Size, angle: number |
 
   return Math.abs(angledWidth);
 };
+
+function getCombinedZoom(element: HTMLElement, prevZoom: number) {
+  const zoom = window.getComputedStyle(element).getPropertyValue('zoom');
+  const parsedZoom = zoom ? Number.parseFloat(zoom) : 1;
+
+  if (parsedZoom !== 1) {
+    prevZoom = prevZoom * parsedZoom;
+  }
+
+  if (element.parentElement?.parentElement) {
+    getCombinedZoom(element.parentElement, prevZoom);
+  }
+
+  return prevZoom
+}
+
+export function getBoundingClientRectWithZoom(el: HTMLElement) {
+  if (!el) return new DOMRect(0, 0, 0, 0);
+
+  let rect = el?.getBoundingClientRect();
+  const zoom = getCombinedZoom(el, 1);
+  const x = zoom * rect.x;
+  const y = zoom * rect.y;
+  const width = zoom * rect.width;
+  const height = zoom * rect.height;
+  const boundingRectWithZoom = new DOMRect(x, y, width, height);
+
+  return boundingRectWithZoom;
+}
